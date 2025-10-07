@@ -1,0 +1,66 @@
+' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+' Preview durch <Alt>d
+
+@startuml Anwendungskern
+
+interface Promise<T>
+interface Readonly<T>
+
+package @nestjs/common {
+  annotation Injectable
+  exception NotFoundException
+}
+
+package generated.prisma {
+  class PrismaClient
+  class BuchGetPayload<T>
+  Prisma +-- BuchGetPayload
+}
+
+package buch {
+  package service #DDDDDD {
+    class PrismaService
+    class WhereBuilder
+    class Slice
+
+    class BuchService << control >> <<@Injectable()>> {
+      + async findById(id: number): Promise<Readonly<Prisma.BuchGetPayload<>>>
+      + async find(suchparameter?: Record<string, any>): Promise<Readonly<Slice<BuchGetPayload>>>
+    }
+
+    BuchService o--> "1" WhereBuilder: whereBuilder
+    BuchService o--> "1" PrismaClient: prisma
+
+    BuchService .up.> Injectable
+    BuchService .up.> NotFoundException
+
+    BuchService .up.> Promise
+    BuchService .up.> Readonly
+    BuchService ..> PrismaService
+    BuchService ..> BuchGetPayload
+    BuchService ..> Slice
+
+    WhereBuilder .[hidden].> PrismaClient
+    Promise .[hidden]right.> Readonly
+  }
+}
+
+hide empty members
+
+footer (c) Jürgen Zimmermann
+
+@enduml

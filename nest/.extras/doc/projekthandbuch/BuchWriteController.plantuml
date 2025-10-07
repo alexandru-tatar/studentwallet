@@ -1,0 +1,103 @@
+' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+' Preview durch <Alt>d
+
+@startuml Controller-Klasse
+
+interface Promise<T>
+
+package @nestjs/common {
+  annotation Controller
+  annotation UseGuards
+  annotation UseInterceptors
+  annotation Post
+  annotation Put
+  annotation Delete
+  annotation Req
+  annotation Res
+  annotation Param
+  annotation Body
+  annotation Headers
+
+  UseInterceptors .[hidden].> Post
+  UseInterceptors .[hidden].> Put
+  UseInterceptors .[hidden].> Delete
+
+  Post .[hidden].> Req
+  Post .[hidden].> Res
+  Post .[hidden].> Param
+  Post .[hidden].> Body
+  Post .[hidden].> Headers
+}
+
+package nest-keycloak-connect {
+  class AuthGuard
+  annotation Roles
+}
+
+package express {
+  class Request
+  class Response
+
+  Response .right[hidden].> Controller
+}
+
+package buch {
+  package service {
+    class BuchWriteService << control >>
+  }
+
+  package rest #DDDDDD {
+    class BuchDtoOhneRef << entity >>
+    class BuchDTO << entity >>
+    BuchDtoOhneRef <|-- BuchDTO
+
+    class BuchWriteController << control >> << @Controller() >> << @UseGuards() >> << @UseInterceptors() >> {
+      + @Post() @Roles() async post(@Body() buch: BuchDTO, @Req() req: Request,  @Res() res: Response): Promise<Response>
+      + @Put() @Roles() async put(@Body() buch: BuchDtoOhneRef, @Param() id: number, @Headers() version: string, @Res() res: Response): Promise<Response>
+      + @Delete() @Roles() async delete(@Param() id: number, @Res() res: Response): Promise<Response>
+    }
+
+    BuchWriteController o--> "1" BuchWriteService : service
+
+    BuchWriteController ..> BuchDTO
+    BuchWriteController ..> BuchDtoOhneRef
+
+    BuchWriteController .up.> Controller
+
+    BuchWriteController .up.> AuthGuard
+    BuchWriteController .up.> Roles
+
+    BuchWriteController .up.> Request
+    BuchWriteController ..> Response
+
+    BuchWriteController .up.> Promise
+
+    AuthGuard .left[hidden].> Res
+    Roles .left[hidden].> Res
+    BuchDTO .down[hidden].> BuchWriteService
+    BuchWriteService .right[hidden].> Request
+    BuchWriteService .down[hidden].> Promise
+    AuthGuard .left[hidden].> Promise
+    BuchWriteService .down[hidden].> Request
+  }
+}
+
+hide empty members
+
+footer (c) Juergen Zimmermann
+
+@enduml

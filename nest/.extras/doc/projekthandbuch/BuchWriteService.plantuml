@@ -1,0 +1,82 @@
+' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+' Preview durch <Alt>d
+
+@startuml Anwendungskern
+
+interface Promise<T>
+
+package @nestjs/common {
+  annotation Injectable
+  exception NotFoundException
+}
+
+package generated.prisma {
+  class Prisma
+  class BuchCreateInput
+  class BuchGetPayload<T>
+  class BuchUpdateInput
+  Prisma +-- BuchCreateInput
+  Prisma +-- BuchGetPayload
+  Prisma +-- BuchUpdateInput
+}
+
+package mail {
+  class MailService
+}
+
+package buch {
+  package service #DDDDDD {
+    class PrismaService
+    class BuchService
+    exception IsbnExists
+    exception VersionInvalid
+    exception VersionOutdated
+
+    class BuchWriteService << control >> <<@Injectable()>> {
+      + async create(buch: Prisma.BuchCreateInput): Promise<number>
+      + async update(id: number, buch: Prisma.BuchUpdateInput, version: string): Promise<number>
+      + async delete(id: number): Promise<void>
+    }
+
+    BuchWriteService o--> "1" PrismaService
+    BuchWriteService o--> "1" BuchService: readService
+    BuchWriteService o--> "1" MailService: mailService
+
+    BuchWriteService .up.> Injectable
+    BuchWriteService .up.> NotFoundException
+
+    BuchWriteService .up.> Promise
+
+    BuchWriteService .down.> BuchCreateInput
+    BuchWriteService .down.> BuchGetPayload
+    BuchWriteService .down.> BuchUpdateInput
+
+    BuchWriteService .down.> IsbnExists
+    BuchWriteService .down.> VersionInvalid
+    BuchWriteService .down.> VersionOutdated
+
+    BuchService .down[hidden].> MailService
+    BuchService .down[hidden].> Prisma
+    IsbnExists .left[hidden].> VersionInvalid
+  }
+}
+
+hide empty members
+
+footer (c) Jürgen Zimmermann
+
+@enduml

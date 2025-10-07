@@ -1,0 +1,68 @@
+' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+' Preview durch <Alt>d
+
+@startuml ER Diagramm
+
+' hide the spot
+hide circel
+
+skinparam linetype ortho
+
+entity "Student" {
+  * id: integer <<generated>>
+  --
+  * version: integer
+  * matriculation_number: text
+  * first_name: text
+  * last_name: text
+  * email: text
+  * semester: integer
+  * created_at: timestamp
+  * updated_at: timestamp
+}
+
+entity "Wallet" {
+  * id: integer <<generated>>
+  --
+  * version: integer
+  * balance: decimal
+  * auto_reload_enabled: boolean
+  * auto_reload_threshold: decimal
+  * auto_reload_amount: decimal
+    last_reloaded: timestamp
+  * **student_id**: integer <<FK>>
+  * created_at: timestamp
+  * updated_at: timestamp
+}
+
+entity "Transaction" {
+  * id: integer <<generated>>
+  --
+  * amount: decimal
+  * type: text
+    reference: text
+    location: text
+  * recorded_at: timestamp
+  * **student_id**: integer <<FK>>
+}
+
+Student ||..|| Wallet
+Student ||..o{ Transaction
+
+footer (c) Alexandru Tatar
+
+@enduml

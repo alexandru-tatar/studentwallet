@@ -1,0 +1,416 @@
+{
+  "info": {
+    "name": "Keycloak",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "openid-configuration",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8880/realms/nest/.well-known/openid-configuration",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8880",
+          "path": ["realms", "nest", ".well-known", "openid-configuration"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Access Token \"admin\"",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Statuscode 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Content-Type application/json', () => {\r",
+              "    const { response } = pm;\r",
+              "    const contentType = response.headers.get('Content-Type');\r",
+              "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+              "});\r",
+              "pm.test('Body mit token, expiresIn, roles', () => {\r",
+              "    const body = pm.response.json();\r",
+              "    console.log(`${JSON.stringify(body)}`);\r",
+              "    const { access_token, expires_in, refresh_token, refresh_expires_in } = body;\r",
+              "    pm.expect(access_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+              "    pm.expect(expires_in).to.be.equal(1800);\r",
+              "    pm.expect(refresh_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+              "    pm.expect(refresh_expires_in).to.be.equal(3600);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "password",
+              "type": "text"
+            },
+            {
+              "key": "username",
+              "value": "admin",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "p",
+              "type": "text"
+            },
+            {
+              "key": "client_id",
+              "value": "{{client_id}}",
+              "type": "text"
+            },
+            {
+              "key": "client_secret",
+              "value": "{{client_secret}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{keycloak_url}}/realms/nest/protocol/openid-connect/token",
+          "host": ["{{keycloak_url}}"],
+          "path": ["realms", "nest", "protocol", "openid-connect", "token"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Access Token \"admin\" BASIC Authentication",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Statuscode 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Content-Type application/json', () => {\r",
+              "    const { response } = pm;\r",
+              "    const contentType = response.headers.get('Content-Type');\r",
+              "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+              "});\r",
+              "pm.test('Body mit token, expiresIn, roles', () => {\r",
+              "    const body = pm.response.json();\r",
+              "    console.log(`${JSON.stringify(body)}`);\r",
+              "    const { access_token, expires_in, refresh_token, refresh_expires_in } = body;\r",
+              "    pm.expect(access_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+              "    pm.expect(expires_in).to.be.equal(1800);\r",
+              "    pm.expect(refresh_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+              "    pm.expect(refresh_expires_in).to.be.equal(3600);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{client_secret}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "{{client_id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "password",
+              "type": "text"
+            },
+            {
+              "key": "username",
+              "value": "admin",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "p",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{keycloak_url}}/realms/nest/protocol/openid-connect/token",
+          "host": ["{{keycloak_url}}"],
+          "path": ["realms", "nest", "protocol", "openid-connect", "token"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Access Token \"user\"",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Statuscode 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Content-Type application/json', () => {\r",
+              "    const { response } = pm;\r",
+              "    const contentType = response.headers.get('Content-Type');\r",
+              "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+              "});\r",
+              "pm.test('Body mit token, expiresIn, roles', () => {\r",
+              "    const body = pm.response.json();\r",
+              "    console.log(`${JSON.stringify(body)}`);\r",
+              "    const { access_token, expires_in, refresh_token, refresh_expires_in } = body;\r",
+              "    pm.expect(access_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+              "    pm.expect(expires_in).to.be.equal(1800);\r",
+              "    pm.expect(refresh_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+              "    pm.expect(refresh_expires_in).to.be.equal(3600);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{client_secret}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "{{client_id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "password",
+              "type": "text"
+            },
+            {
+              "key": "username",
+              "value": "user",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "p",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{keycloak_url}}/realms/nest/protocol/openid-connect/token",
+          "host": ["{{keycloak_url}}"],
+          "path": ["realms", "nest", "protocol", "openid-connect", "token"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Access Token Invalid Username",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Statuscode 401', () => {\r",
+              "    pm.response.to.have.status(401);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{client_secret}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "{{client_id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "password",
+              "type": "text"
+            },
+            {
+              "key": "username",
+              "value": "FALSCH",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "p",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{keycloak_url}}/realms/nest/protocol/openid-connect/token",
+          "host": ["{{keycloak_url}}"],
+          "path": ["realms", "nest", "protocol", "openid-connect", "token"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Access Token Invalid Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Statuscode 401', () => {\r",
+              "    pm.response.to.have.status(401);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{client_secret}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "{{client_id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "password",
+              "type": "text"
+            },
+            {
+              "key": "username",
+              "value": "admin",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "FALSCH",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{keycloak_url}}/realms/nest/protocol/openid-connect/token",
+          "host": ["{{keycloak_url}}"],
+          "path": ["realms", "nest", "protocol", "openid-connect", "token"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Refresh Access Token",
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{client_secret}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "{{client_id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "refresh_token",
+              "type": "text"
+            },
+            {
+              "key": "refresh_token",
+              "value": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIzZGU5ZDdhMC1jY2NlLTQ5MzItOGE3OS05NjY2ZGRhNzUxZDEifQ.eyJleHAiOjE3MTE3MTU0NDEsImlhdCI6MTcxMTcxMTg0MSwianRpIjoiMDY0Y2ZiODYtMTBmZS00ZmUwLThjMTctNWM0ZGI2OWU1NmIxIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9hY21lIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9hY21lIiwic3ViIjoiZjkxNTZhYmYtNmRhNS00OGJmLWJjMWMtODEzM2FhZTI3NDE0IiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImJ1Y2gtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjA3ZmRmY2RlLWFhNWYtNDAzZi05NGViLWUyMGUxNzcxNTBjMiIsInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsInNpZCI6IjA3ZmRmY2RlLWFhNWYtNDAzZi05NGViLWUyMGUxNzcxNTBjMiJ9.szFVqfusZVEw1GjUkoBwPTt450VMrF6M68-qdhPorTHS0smC_XyPq0-NRGwYU1wuOHOeaRo0qJI2iwE5gZwxxQ",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{keycloak_url}}/realms/nest/protocol/openid-connect/token",
+          "host": ["{{keycloak_url}}"],
+          "path": ["realms", "nest", "protocol", "openid-connect", "token"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

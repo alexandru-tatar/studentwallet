@@ -1,0 +1,4 @@
+id;version;matriculation_number;first_name;last_name;email;semester;created_at;updated_at
+1000;0;85626;Alexandru;Tatar;taal1014@stud.hs-ka.de;2;2025-02-01 08:00:00;2025-02-01 08:00:00
+1001;0;85313;Antonio;Codrean;coan1011@stud.hs-ka.de;4;2025-02-01 08:05:00;2025-02-01 08:05:00
+1002;0;35163;Sebastian;Kaiser;kase1034@stud.hs-ka.de;1;2025-02-01 08:10:00;2025-02-01 08:10:00

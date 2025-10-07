@@ -1,0 +1,7 @@
+id;amount;type;reference;location;recorded_at;student_id
+1000;25.00;LOAD;Ersteinzahlung;Online-Portal;2025-01-15 09:00:00;1000
+1001;-3.80;SPEND;Kaffee;Cafeteria;2025-01-16 09:30:00;1000
+1002;30.00;LOAD;Elterneinzahlung;Online-Portal;2025-01-12 12:00:00;1001
+1003;-5.50;SPEND;Mittagessen;Mensa;2025-01-13 12:30:00;1001
+1004;15.00;LOAD;Willkommensbonus;Studentenwerk;2025-01-10 10:00:00;1002
+1005;-2.50;SPEND;Snacks;Getraenkeautomat;2025-01-11 14:15:00;1002

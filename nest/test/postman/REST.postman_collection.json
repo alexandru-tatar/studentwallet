@@ -1,0 +1,3147 @@
+{
+  "info": {
+    "name": "REST",
+    "description": "REST-Schnittstelle",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Suche mit ID",
+      "item": [
+        {
+          "name": "Vorhandene ID 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body.id).to.be.eql(1);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "Buch ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vorhandene ID 1 mit If-None-Match",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 304', () => {\r",
+                  "    pm.response.to.have.status(304);\r",
+                  "});\r",
+                  "pm.test('Leerer Body', () => {\r",
+                  "    const body = pm.response.text();\r",
+                  "    pm.expect(body).to.be.a('string').that.is.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "If-None-Match",
+                "value": "\"0\"",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "Buch ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vorhandene ID 1 mit falscher Versionsnummer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body.id).to.be.eql(1);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "If-None-Match",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "Buch ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Nicht-vorhandene ID 999999",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('ProblemDetails im Response Body', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { message, error, statusCode } = body;\r",
+                  "    pm.expect(message).to.be.a('string').that.includes('999999');\r",
+                  "    pm.expect(error).to.be.equal('Not Found');\r",
+                  "    pm.expect(statusCode).to.be.equal(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "999999",
+                  "description": "Buch ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Falsche ID xy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test('statusCode im Response-Body', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body.statusCode).to.be.equal(404);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "xy",
+                  "description": "Buch ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle nach Büchern anhand der ID suchen.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Suche mit Suchparameter",
+      "item": [
+        {
+          "name": "Alle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: mind. 1 Buch und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content, page } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.map(buch => buch.id)\r",
+                  "        .forEach(id => pm.expect(id).to.be.above(0));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": ["{{rest_url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alle Seite 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: mind. 1 Buch und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.map(buch => buch.id)\r",
+                  "        .forEach(id => pm.expect(id).to.be.above(0));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?page=2",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alle Seite 9999",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?page=9999",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "9999"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Teilstring \"n\" des Titels",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: Titel enthaelt \"n\" und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { titel, id } = buch;\r",
+                  "        pm.expect(titel.titel).to.be.a('string').that.includes('n');\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?titel=n",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "titel",
+                  "value": "n"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Teilstring \"n\" auf Seite 9999",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?titel=n&page=9999",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "titel",
+                  "value": "n"
+                },
+                {
+                  "key": "page",
+                  "value": "9999"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Nicht-vorhandener Teilstring des Titels",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?titel=xxx",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "titel",
+                  "value": "xxx"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ISBN 978-3-897-22583-1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: ISBN und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.has.a.lengthOf(1);\r",
+                  "    const { isbn, id } = content[0];\r",
+                  "    pm.expect(isbn).to.be.a('string').that.includes('978-3-897-22583-1');\r",
+                  "    pm.expect(id).to.be.above(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?isbn=978-3-897-22583-1",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "isbn",
+                  "value": "978-3-897-22583-1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ISBN falsch",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?isbn=x",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "isbn",
+                  "value": "x"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Schlagwort JAVASCRIPT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: Schlagwort JAVASCRIPT und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { schlagwoerter, id } = buch;\r",
+                  "        pm.expect(schlagwoerter).to.be.an('array').that.includes('JAVASCRIPT');\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?javascript=true",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "javascript",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Schlagwort TYPESCRIPT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: Schlagwort TYPESCRIPT und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { schlagwoerter, id } = buch;\r",
+                  "        pm.expect(schlagwoerter).to.be.an('array').that.includes('TYPESCRIPT');\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?typescript=true",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "typescript",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Schlagwoerter TYPESCRIPT und JAVA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: Schlagwoerter TYPESCRIPT und JAVA sowie ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { schlagwoerter, id } = buch;\r",
+                  "        pm.expect(schlagwoerter).to.be.an('array').that.includes.members(['TYPESCRIPT', 'JAVA']);\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?typescript=true&java=true",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "typescript",
+                  "value": "true"
+                },
+                {
+                  "key": "java",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Schlagwoerter JAVASCRIPT und JAVA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: Schlagwoerter JAVASCRIPT und JAVA sowie ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { schlagwoerter, id } = buch;\r",
+                  "        pm.expect(schlagwoerter).to.be.an('array').that.includes.members(['JAVASCRIPT', 'JAVA']);\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?javascript=true&java=true",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "javascript",
+                  "value": "true"
+                },
+                {
+                  "key": "java",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Schlagwort FALSCH",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?FALSCH=true",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "FALSCH",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buchart EPUB",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: Schlagwort TYPESCRIPT und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { art, id } = buch;\r",
+                  "        pm.expect(art).to.be.equal('EPUB');\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cache-Control",
+                "value": "no-cache",
+                "type": "text"
+              },
+              {
+                "key": "Postman-Token",
+                "value": "<calculated when request is sent>",
+                "type": "text"
+              },
+              {
+                "key": "Host",
+                "value": "<calculated when request is sent>",
+                "type": "text"
+              },
+              {
+                "key": "User-Agent",
+                "value": "PostmanRuntime/7.31.1",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept-Encoding",
+                "value": "gzip, deflate, br",
+                "type": "text"
+              },
+              {
+                "key": "Connection",
+                "value": "keep-alive",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?art=EPUB",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "art",
+                  "value": "EPUB"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buchart UNGUELTIG",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cache-Control",
+                "value": "no-cache",
+                "type": "text"
+              },
+              {
+                "key": "Postman-Token",
+                "value": "<calculated when request is sent>",
+                "type": "text"
+              },
+              {
+                "key": "Host",
+                "value": "<calculated when request is sent>",
+                "type": "text"
+              },
+              {
+                "key": "User-Agent",
+                "value": "PostmanRuntime/7.31.1",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept-Encoding",
+                "value": "gzip, deflate, br",
+                "type": "text"
+              },
+              {
+                "key": "Connection",
+                "value": "keep-alive",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?art=UNGUELTIG",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "art",
+                  "value": "UNGUELTIG"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Teilstring \"na\" des Titels und Preis <= 35.5",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: Titel enthaelt \"na\", Preis <= 45.5 und ID vorhanden', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { titel, preis, id } = buch;\r",
+                  "        pm.expect(titel.titel).to.be.a('string').that.includes('na');\r",
+                  "        pm.expect(preis).to.be.a('string');\r",
+                  "        const preisNumber = Number(preis);\r",
+                  "        pm.expect(preisNumber).to.be.lte(45.5);\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?titel=na&preis=45.5",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "titel",
+                  "value": "na"
+                },
+                {
+                  "key": "preis",
+                  "value": "45.5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rating >= 3",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: rating und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { rating, id } = buch;\r",
+                  "        pm.expect(rating).to.be.gte(3);\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?rating=3",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "rating",
+                  "value": "3"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ungültiges Rating 9",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?rating=9",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "rating",
+                  "value": "9"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Preis <= 30",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: preis und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { preis, id } = buch;\r",
+                  "        pm.expect(Number(preis)).to.be.lte(30);\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?preis=30",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "preis",
+                  "value": "30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "lieferbar false",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: preis und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { preis, id } = buch;\r",
+                  "        pm.expect(Number(preis)).to.be.lte(70);\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?lieferbar=false",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "lieferbar",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "datum",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body: preis und ID', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { content } = body;\r",
+                  "    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+                  "    content.forEach(buch => {\r",
+                  "        const { preis, id } = buch;\r",
+                  "        pm.expect(Number(preis)).to.be.lte(99.9);\r",
+                  "        pm.expect(id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?datum=2025-02-08",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "datum",
+                  "value": "2025-02-08"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Nicht-vorhandene Property",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?php=true",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "php",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Anzahl",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('\"count\" im Response-Body', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    console.log(`body=${JSON.stringify(body)}`);\r",
+                  "    pm.expect(body.count).to.be.a('number');\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rest_url}}?only=count",
+              "host": ["{{rest_url}}"],
+              "query": [
+                {
+                  "key": "only",
+                  "value": "count"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle nach Bücher mit Suchparametern suchen.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Token",
+      "item": [
+        {
+          "name": "Token admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Body mit token, expiresIn, roles', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    console.log(`${JSON.stringify(body)}`);\r",
+                  "    const { access_token, expires_in, refresh_token, refresh_expires_in, roles } = body;\r",
+                  "    pm.expect(access_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+                  "    pm.expect(expires_in).to.be.equal(1800);\r",
+                  "    pm.expect(refresh_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+                  "    pm.expect(refresh_expires_in).to.be.equal(3600);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "p",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{token_url}}",
+              "host": ["{{token_url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Token mit falschem Passwort",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 401', () => {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "FALSCH",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{token_url}}",
+              "host": ["{{token_url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Token ohne Benutzerkennung",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 401', () => {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{token_url}}",
+              "host": ["{{token_url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "refresh_token",
+                  "value": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIzZGU5ZDdhMC1jY2NlLTQ5MzItOGE3OS05NjY2ZGRhNzUxZDEifQ.eyJleHAiOjE3MTk0NjU3MTksImlhdCI6MTcxOTQ2MjExOSwianRpIjoiM2FlODEzZjctYWZlZi00ZGE5LWJhNGItNmE0Mjc4ODk5OTRjIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4ODgwL3JlYWxtcy9hY21lIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo4ODgwL3JlYWxtcy9hY21lIiwic3ViIjoiZjkxNTZhYmYtNmRhNS00OGJmLWJjMWMtODEzM2FhZTI3NDE0IiwidHlwIjoiUmVmcmVzaCIsImF6cCI6Im5lc3QtY2xpZW50Iiwic2lkIjoiYzNjYWQ5MTEtNjA5ZC00NmMyLTljOTYtMzU3MGYyN2VjNjE2Iiwic2NvcGUiOiJ3ZWItb3JpZ2lucyBwcm9maWxlIGFjciByb2xlcyBiYXNpYyBlbWFpbCJ9.6HV6Junz-ONh1-ZZg3VGBO1rnFrjN_ULwh3dW6n6slCy8WvllVs5EKa7hD7OlwM9ASlklyFniAiP1OvyH_CS3g",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle einen JWT erhalten",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Neuanlegen",
+      "item": [
+        {
+          "name": "Neues Buch",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 201', () => {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "pm.test('Location', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const location = response.headers.get('Location');\r",
+                  "    pm.expect(location).to.match(/\\/rest\\/[1-9]\\d*/u);\r",
+                  "});\r",
+                  "pm.test('Leerer Body', () => {\r",
+                  "    const body = pm.response.text();\r",
+                  "    pm.expect(body).to.be.a('string').that.is.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"978-0-007-00644-1\",\r\n  \"rating\": 1,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": 99.99,\r\n  \"rabatt\": 0.123,\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-02-28T00:00:00Z\",\r\n  \"homepage\": \"https://post.rest\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\", \"TYPESCRIPT\"],\r\n  \"titel\": {\r\n    \"titel\": \"Titelpost\",\r\n    \"untertitel\": \"untertitelpost\"\r\n  },\r\n  \"abbildungen\": [{\r\n    \"beschriftung\": \"Abb. 1\",\r\n    \"contentType\": \"img/png\"\r\n  }]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": ["{{rest_url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Neues Buch mit bereits existierender ISBN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 422', () => {\r",
+                  "    pm.response.to.have.status(422);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Fehlermeldung im Response Body', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { message } = body;\r",
+                  "    pm.expect(message).to.be.a('string').that.includes('ISBN');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => pm.collectionVariables.set('TOKEN', res.json().access_token));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"978-3-897-22583-1\",\r\n  \"rating\": 1,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": 99.9,\r\n  \"rabatt\": 0.1,\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-01-31T00:00:00Z\",\r\n  \"homepage\": \"https://post.isbn\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\", \"TYPESCRIPT\"],\r\n  \"titel\": {\r\n    \"titel\": \"Titelpostisbn\",\r\n    \"untertitel\": \"Untertitelpostisbn\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": ["{{rest_url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Neues Buch mit ungültigen Daten",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 400', () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Fehlermeldungen im Response Body', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { message } = body;\r",
+                  "    const props = ['titel.titel', 'isbn', 'rating', 'art', 'preis', 'rabatt', 'datum', 'homepage'];\r",
+                  "    pm.expect(message).to.be.an('array').that.has.a.lengthOf(props.length);\r",
+                  "    message.forEach(msg => pm.expect(msg).to.be.a('string').that.includes.oneOf(props));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => pm.collectionVariables.set('TOKEN', res.json().access_token));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"falsche-ISBN\",\r\n  \"rating\": -1,\r\n  \"art\": \"UNSICHTBAR\",\r\n  \"preis\": -1,\r\n  \"rabatt\": 2,\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-02-30T00:00:00Z\",\r\n  \"homepage\": \"anyHomepage\",\r\n  \"titel\": {\r\n    \"titel\": \"?!\",\r\n    \"untertitel\": \"Untertitelinvalid\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": ["{{rest_url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Neues Buch als user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 201', () => {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "pm.test('Location', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const location = response.headers.get('Location');\r",
+                  "    pm.expect(location).to.match(/\\/rest\\/[1-9]\\d*/u);\r",
+                  "});\r",
+                  "pm.test('Leerer Body', () => {\r",
+                  "    const body = pm.response.text();\r",
+                  "    pm.expect(body).to.be.a('string').that.is.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=user&password=p',\r",
+                  "}, (err, res) => pm.collectionVariables.set('TOKEN', res.json().access_token));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"978-0-007-00644-1\",\r\n  \"rating\": 1,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": 99.99,\r\n  \"rabatt\": 0.123,\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-01-31T00:00:00Z\",\r\n  \"homepage\": \"https://post.rest\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\", \"TYPESCRIPT\"],\r\n  \"titel\": {\r\n    \"titel\": \"Titelpost\",\r\n    \"untertitel\": \"untertitelpost\"\r\n  },\r\n  \"abbildungen\": [{\r\n    \"beschriftung\": \"Abb. 1\",\r\n    \"contentType\": \"img/png\"\r\n  }]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": ["{{rest_url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Neues Buch ohne Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 401', () => {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"978-0-007-00644-1\",\r\n  \"rating\": 1,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": 99.99,\r\n  \"rabatt\": 0.123,\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-01-31T00:00:00Z\",\r\n  \"homepage\": \"https://post.rest\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\", \"TYPESCRIPT\"],\r\n  \"titel\": {\r\n    \"titel\": \"Titelpost\",\r\n    \"untertitel\": \"untertitelpost\"\r\n  },\r\n  \"abbildungen\": [{\r\n    \"beschriftung\": \"Abb. 1\",\r\n    \"contentType\": \"img/png\"\r\n  }]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": ["{{rest_url}}"]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle neue Bücher anlegen",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ändern",
+      "item": [
+        {
+          "name": "Buch 30 ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 204', () => {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    pm.expect(token).to.be.a('string');\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"0\"",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"978-0-201-63361-0\",\r\n  \"rating\": 5,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": \"3333\",\r\n  \"rabatt\": \"0.33\",\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-03-03T00:00:00Z\",\r\n  \"homepage\": \"https://put.rest\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\"]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buch 30 mit falscher Versionsnummer ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 412', () => {\r",
+                  "    pm.response.to.have.status(412);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Fehlermeldung im Body', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { message } = body;\r",
+                  "    pm.expect(message).to.be.a('string').that.includes('Versionsnummer');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"978-0-201-63361-0\",\r\n  \"rating\": 5,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": \"3333\",\r\n  \"rabatt\": \"0.33\",\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-03-03T00:00:00Z\",\r\n  \"homepage\": \"https://put.rest\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buch 30 ohne Versionsnummer ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 428', () => {\r",
+                  "    pm.response.to.have.status(428);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Fehlermeldung im Body', () => {\r",
+                  "    const msg = pm.response.text();\r",
+                  "    pm.expect(msg).to.be.a('string').that.includes('If-Match');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"978-0-201-63361-0\",\r\n  \"rating\": 5,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": \"3333\",\r\n  \"rabatt\": \"0.33\",\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-03-03T00:00:00Z\",\r\n  \"homepage\": \"https://put.rest\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buch 30 mit alter Versionsnummer ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 412', () => {\r",
+                  "    pm.response.to.have.status(412);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Fehlermeldung im Body', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { message } = body;\r",
+                  "    pm.expect(message).to.be.a('string').that.includes('Versionsnummer');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"-1\"",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"978-0-201-63361-0\",\r\n  \"rating\": 5,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": \"3333\",\r\n  \"rabatt\": \"0.33\",\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-03-03T00:00:00Z\",\r\n  \"homepage\": \"https://put.rest\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Nicht-vorhandenes Buch 999999 ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 404', () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Fehlermeldung im Body', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { message } = body;\r",
+                  "    pm.expect(message).to.be.a('string').that.includes('999999');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"0\"",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"978-0-201-63361-0\",\r\n  \"rating\": 5,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": \"3333\",\r\n  \"rabatt\": \"0.33\",\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2025-03-03T00:00:00Z\",\r\n  \"homepage\": \"https://put.rest\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "999999"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buch 30 mit ungültigen Daten ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 400', () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+                  "});\r",
+                  "pm.test('Fehlermeldungen im Response Body', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { message } = body;\r",
+                  "    const props = ['isbn', 'rating', 'art', 'preis', 'rabatt', 'datum', 'homepage'];\r",
+                  "    pm.expect(message).to.be.an('array').that.has.a.lengthOf(props.length);\r",
+                  "    message.forEach(msg => pm.expect(msg).to.be.a('string').that.includes.oneOf(props));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"0\"",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isbn\": \"falsche-ISBN\",\r\n  \"rating\": -1,\r\n  \"art\": \"UNSICHTBAR\",\r\n  \"preis\": \"-1\",\r\n  \"rabatt\": \"2\",\r\n  \"lieferbar\": true,\r\n  \"datum\": \"12345-123-123\",\r\n  \"homepage\": \"anyHomepage\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "30"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle vorhandene Bücher löschen",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Löschen",
+      "item": [
+        {
+          "name": "Buch 50 löschen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 204', () => {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "pm.test('Leerer Body', () => {\r",
+                  "    const body = pm.response.text();\r",
+                  "    pm.expect(body).to.be.a('string').that.is.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    pm.expect(token).to.be.a('string');\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Nicht-vorhandenes Buch 999999 löschen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 204', () => {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    pm.expect(token).to.be.a('string');\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"0\"",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "999999"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle vorhandene Bücher löschen",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "File Upload/Download",
+      "item": [
+        {
+          "name": "Neues Bild",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 204', () => {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "pm.test('Location', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const location = response.headers.get('Location');\r",
+                  "    pm.expect(location).to.match(/\\/rest\\/file\\/[1-9]\\d*/u);\r",
+                  "});\r",
+                  "pm.test('Leerer Body', () => {\r",
+                  "    const body = pm.response.text();\r",
+                  "    pm.expect(body).to.be.a('string').that.is.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "contentType": "",
+                  "type": "file",
+                  "src": "/C:/workspace/software-engineering/nest/test/postman/logo.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Neues Video mp4",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 204', () => {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "pm.test('Location', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const location = response.headers.get('Location');\r",
+                  "    pm.expect(location).to.match(/\\/rest\\/file\\/[1-9]\\d*/u);\r",
+                  "});\r",
+                  "pm.test('Leerer Body', () => {\r",
+                  "    const body = pm.response.text();\r",
+                  "    pm.expect(body).to.be.a('string').that.is.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({\r",
+                  "    url: 'https://localhost:3000/auth/token',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "    },\r",
+                  "    body: 'username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    const token = res.json().access_token;\r",
+                  "    console.log(`token=${token}`);\r",
+                  "    pm.collectionVariables.set('TOKEN', token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "contentType": "video/mp4",
+                  "type": "file",
+                  "src": "/C:/workspace/software-engineering/nest/test/postman/video.mp4"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": ["{{rest_url}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Datei zu Buch mit ID 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rest_url}}/file/:id",
+              "host": ["{{rest_url}}"],
+              "path": ["file", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "rest_url",
+      "value": "{{base_url}}/rest",
+      "type": "string"
+    },
+    {
+      "key": "token_url",
+      "value": "{{base_url}}/auth/token",
+      "type": "string"
+    },
+    {
+      "key": "TOKEN",
+      "value": "",
+      "type": "string",
+      "disabled": true
+    },
+    {
+      "key": "TOKEN",
+      "value": ""
+    },
+    {
+      "key": "REFRESH_TOKEN",
+      "value": ""
+    }
+  ]
+}
