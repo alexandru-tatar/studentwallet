@@ -49,16 +49,16 @@ services:
     # command: ["start-dev", "--import-realm"]
     volumes:
       - type: bind
-        source: C:/Zimmermann/volumes/keycloak/data
+        source: /Users/alexandru-tatar/SWE/keycloak/data
         # mit Unterverzeichnis h2
         target: /opt/keycloak/data
       - type: bind
-        source: C:/Zimmermann/volumes/keycloak/tls/key.pem
+        source: /Users/alexandru-tatar/SWE/keycloak/tls/key.pem
         # https://www.keycloak.org/server/enabletls
         target: /opt/keycloak/conf/key.pem
         read_only: true
       - type: bind
-        source: C:/Zimmermann/volumes/keycloak/tls/certificate.crt
+        source: /Users/alexandru-tatar/SWE/keycloak/tls/certificate.crt
         target: /opt/keycloak/conf/certificate.crt
         read_only: true
       #- type: bind
