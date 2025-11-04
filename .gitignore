@@ -3,6 +3,9 @@
 # compiled output
 dist
 
+# Eigene .md-Datei
+Lernen.md
+
 # Abhaengige Dateien durch npm
 node_modules
 

@@ -13,25 +13,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-/// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
+// https://www.prisma.io/blog/testing-series-2-xPhjjmIEsM
 
-// https://vitest.dev/config
+import { defineConfig } from 'vitest/config';
+
 export default defineConfig({
     test: {
-        name: 'Integration',
+        name: 'Unit',
         // default ist ['**\/*.{test,spec}.?(c|m)[jt]s?(x)']
-        include: ['test/integration/**/*.test.mts'],
+        include: ['test/unit/**/*.test.mts'],
         globals: true,
         environment: 'node',
-        // https://vitest.dev/config/#globalsetup
-        globalSetup: './test/integration/setup.global.mts',
         testTimeout: 10_000,
+        setupFiles: 'vitest.setup.ts',
         // https://vitest.dev/guide/coverage
         // https://vitest.dev/config/#coverage
         coverage: {
-            include: ['src/**'],
-            exclude: ['src/config/resources/**'],
+            include: ['src/buch/service/*'],
             // default ist ['text', 'html', 'clover', 'json']
             reporter: ['text', 'html'],
             // default ist 'v8'

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli.json",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": false,
+    "tsConfigPath": "tsconfig.build.json",
+    "assets": [
+      {
+        "include": "**/*.yml",
+        "outDir": "dist/src"
+      },
+      {
+        "include": "**/*.yaml",
+        "outDir": "dist/src"
+      },
+      {
+        "include": "config/resources/**/*",
+        "outDir": "dist/src/config/resources"
+      }
+    ]
+  }
+}
