@@ -23,3 +23,21 @@ SET search_path TO campus_wallet;
 COPY student FROM '/csv/students.csv' (FORMAT csv, DELIMITER ';', HEADER true, NULL '\N');
 COPY wallet FROM '/csv/wallets.csv' (FORMAT csv, DELIMITER ';', HEADER true, NULL '\N');
 COPY transaction FROM '/csv/transactions.csv' (FORMAT csv, DELIMITER ';', HEADER true, NULL '\N');
+
+SELECT setval(
+    pg_get_serial_sequence('campus_wallet.student', 'id'),
+    COALESCE((SELECT MAX(id) FROM campus_wallet.student), 0) + 1,
+    false
+);
+
+SELECT setval(
+    pg_get_serial_sequence('campus_wallet.wallet', 'id'),
+    COALESCE((SELECT MAX(id) FROM campus_wallet.wallet), 0) + 1,
+    false
+);
+
+SELECT setval(
+    pg_get_serial_sequence('campus_wallet.transaction', 'id'),
+    COALESCE((SELECT MAX(id) FROM campus_wallet."transaction"), 0) + 1,
+    false
+);

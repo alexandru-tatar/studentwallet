@@ -24,6 +24,7 @@ model Student {
   createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt           DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   transactions        Transaction[]
+  studentwalletFile   StudentwalletFile?
   wallet              Wallet?
 
   @@map("student")
@@ -44,6 +45,20 @@ model Wallet {
   student             Student   @relation(fields: [studentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("wallet")
+  @@schema("campus_wallet")
+}
+
+model StudentwalletFile {
+  id        Int       @id @default(autoincrement())
+  /// https://www.prisma.io/docs/orm/reference/prisma-schema-reference#bytes
+  data      Bytes
+  filename  String
+  mimetype  String?
+  studentId Int        @unique @map("student_id")
+  student   Student    @relation(fields: [studentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([studentId])
+  @@map("studentwallet_file")
   @@schema("campus_wallet")
 }
 
