@@ -16,13 +16,13 @@ import { HttpStatus } from '@nestjs/common';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { type StudentDtoOhneRef } from '../../../src/studentwallet/controller/student-dto.js';
 import {
-    APPLICATION_JSON,
-    AUTHORIZATION,
-    BEARER,
-    CONTENT_TYPE,
-    IF_MATCH,
-    PUT,
-    restURL,
+  APPLICATION_JSON,
+  AUTHORIZATION,
+  BEARER,
+  CONTENT_TYPE,
+  IF_MATCH,
+  PUT,
+  restURL,
 } from '../constants.mjs';
 import { getToken } from '../token.mjs';
 
@@ -30,13 +30,13 @@ import { getToken } from '../token.mjs';
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
 const geaenderterStudent: StudentDtoOhneRef = {
-  matriculationNumber: '86535',
-  firstName: 'Max',
-  lastName: 'Updated',
-  email: 'max.updated@h-ka.de',
-  semester: 4,
+  matriculationNumber: '85625',
+  firstName: 'Alexandru',
+  lastName: 'Tatar',
+  email: 'taal1014@stud.hs-ka.de',
+  semester: 2,
 };
-const idVorhanden = '30';
+const idVorhanden = '1000';
 
 const geaenderterStudentIdNichtVorhanden: StudentDtoOhneRef = {
   matriculationNumber: '85625',
@@ -115,12 +115,13 @@ describe('PUT /rest/:id', () => {
     headers.append(CONTENT_TYPE, APPLICATION_JSON);
     headers.append(IF_MATCH, '"0"');
     headers.append(AUTHORIZATION, `${BEARER} ${token}`);
+
     const expectedMsg = [
-      expect.stringMatching(/^matriculationNumber /u),
-      expect.stringMatching(/^firstName /u),
-      expect.stringMatching(/^lastName /u),
-      expect.stringMatching(/^email /u),
-      expect.stringMatching(/^semester /u),
+      'matriculationNumber: Großbuchstaben/Ziffern, 5-20 Zeichen',
+      'firstName must be a string',
+      'lastName must be a string',
+      'email must be an email',
+      'semester must not be less than 1',
     ];
 
     // when
@@ -138,7 +139,7 @@ describe('PUT /rest/:id', () => {
 
     expect(messages).toBeDefined();
     expect(messages).toHaveLength(expectedMsg.length);
-    expect(messages).toStrictEqual(expect.arrayContaining(expectedMsg));
+    expect(messages).toEqual(expect.arrayContaining(expectedMsg));
   });
 
   test('Vorhandenen Student aendern, aber ohne Versionsnummer', async () => {

@@ -28,10 +28,10 @@ const firstNameNichtVorhanden = ['xxx', 'yyy', 'zzz'];
 const lastNameTeilstuecke = ['ta', 'co', 'ka'];
 const lastNameNichtVorhanden = ['qqq', 'rrr', 'sss'];
 
-const matriculationNumbers = ['85635', '85625'];
+const matriculationNumbers = ['85626', '85313'];
 const emails = ['taal1014@stud.hs-ka.de'];
 
-const semesterExact = [1, 3];
+const semesterExact = [2, 4];
 
 // -----------------------------------------------------------------------------
 // T e s t s

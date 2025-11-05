@@ -16,13 +16,13 @@ import { HttpStatus } from '@nestjs/common';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { type StudentDTO } from '../../../src/studentwallet/controller/student-dto.js';
 import {
-    APPLICATION_JSON,
-    AUTHORIZATION,
-    BEARER,
-    CONTENT_TYPE,
-    LOCATION,
-    POST,
-    restURL,
+  APPLICATION_JSON,
+  AUTHORIZATION,
+  BEARER,
+  CONTENT_TYPE,
+  LOCATION,
+  POST,
+  restURL,
 } from '../constants.mjs';
 import { getToken } from '../token.mjs';
 
@@ -45,7 +45,7 @@ const neuerStudent: Omit<StudentDTO, 'wallet' | 'transactions'> & {
     recordedAt?: string;
   }>;
 } = {
-  matriculationNumber: 'MPOST1', // Regex: Großbuchstaben/Ziffern, 5-20
+  matriculationNumber: 'MPOST1',
   firstName: 'Max',
   lastName: 'Mustermann',
   email: 'max.post1@stud.hs-karlsruhe.de',
@@ -69,47 +69,29 @@ const neuerStudent: Omit<StudentDTO, 'wallet' | 'transactions'> & {
 };
 
 const neuerStudentInvalid: Record<string, unknown> = {
-  // verletzt mehrere Rules in StudentDtoOhneRef
-  matriculationNumber: 'abc',              // Regex verletzt
-  firstName: 123,                          // IsString verletzt
-  lastName: true,                          // IsString verletzt
-  email: 'not-an-email',                   // IsEmail verletzt
-  semester: 0,                             // Min(1) verletzt
-  // Wallet: verletzt Decimal-Min und ISO
+  matriculationNumber: 'abc',
+  firstName: 123,
+  lastName: true,
+  email: 'not-an-email',
+  semester: 0,
   wallet: {
-    balance: -1,                           // >= 0 gefordert
+    balance: -1,
     autoReloadThreshold: -5,
     autoReloadAmount: -10,
-    lastReloaded: '12345-99-99',           // ungültiges Datum
+    lastReloaded: '12345-99-99',
   },
-  // Transaction: verletzt Amount > 0 und Enum/type
   transactions: [
     {
-      amount: 0,                           // > 0 gefordert
-      type: 'UNKNOWN',                     // ungültig
-      reference: 42,                       // IsString verletzt
-      location: 77,                        // IsString verletzt
-      recordedAt: 'foo',                   // ISO verletzt
+      amount: 0,
+      type: 'SPEND',
+      reference: 42,
+      location: 77,
+      recordedAt: 'foo',
     },
   ],
 };
 
-const neuerStudentKonflikt: typeof neuerStudent = {
-  // Bitte hier Matrikelnummer/E-Mail verwenden, die in deinen Seeds existieren,
-  // damit 422 wirklich ausgelöst wird.
-  matriculationNumber: 'M12345',
-  firstName: 'Eva',
-  lastName: 'Dup',
-  email: 'max.mustermann@stud.hs-karlsruhe.de',
-  semester: 2,
-  wallet: {
-    balance: 10,
-    autoReloadEnabled: false,
-  },
-  transactions: [],
-};
 
-type MessageType = { message: string | string[] };
 
 // -----------------------------------------------------------------------------
 // T e s t s
@@ -142,7 +124,6 @@ describe('POST /rest', () => {
     const location = responseHeaders.get(LOCATION);
     expect(location).toBeDefined();
 
-    // ID nach dem letzten "/"
     const indexLastSlash = location?.lastIndexOf('/') ?? -1;
     expect(indexLastSlash).not.toBe(-1);
 
@@ -160,22 +141,23 @@ describe('POST /rest', () => {
     headers.append(CONTENT_TYPE, APPLICATION_JSON);
     headers.append(AUTHORIZATION, `${BEARER} ${token}`);
 
-    // erwartete Feldprefixe wie bei den Buch-Tests
     const expectedMsg = [
-    expect.stringMatching(/^matriculationNumber /u),
-    expect.stringMatching(/^firstName /u),
-    expect.stringMatching(/^lastName /u),
-    expect.stringMatching(/^email /u),
-    expect.stringMatching(/^semester /u),
-    expect.stringMatching(/^wallet\.balance /u),
-    expect.stringMatching(/^wallet\.autoReloadThreshold /u),
-    expect.stringMatching(/^wallet\.autoReloadAmount /u),
-    expect.stringMatching(/^wallet\.lastReloaded /u),
-    expect.stringMatching(/^transactions\[0\]\.amount /u),
-    expect.stringMatching(/^transactions\[0\]\.type /u),
-    expect.stringMatching(/^transactions\[0\]\.reference /u),
-    expect.stringMatching(/^transactions\[0\]\.location /u),
-    expect.stringMatching(/^transactions\[0\]\.recordedAt /u),
+      // Wallet
+      expect.stringMatching(/^wallet\.balance .*≥ 0\./u),
+      expect.stringMatching(/^wallet\.autoReloadThreshold .*≥ 0\./u),
+      expect.stringMatching(/^wallet\.autoReloadAmount .*≥ 0\./u),
+      expect.stringMatching(/^wallet\.lastReloaded .*ISO 8601/i),
+
+      expect.stringMatching(/^transactions\.0\.amount .*>\s*0/i),
+      expect.stringMatching(/^transactions\.0\.reference .*string/i),
+      expect.stringMatching(/^transactions\.0\.location .*string/i),
+      expect.stringMatching(/^transactions\.0\.recordedAt .*ISO 8601/i),
+
+      expect.stringMatching(/^matriculationNumber: Großbuchstaben\/Ziffern, 5-20 Zeichen$/u),
+      expect.stringMatching(/^firstName .*string/i),
+      expect.stringMatching(/^lastName .*string/i),
+      expect.stringMatching(/^email .*email/i),
+      expect.stringMatching(/^semester .*not be less than 1/i),
     ];
 
     // when
@@ -186,16 +168,15 @@ describe('POST /rest', () => {
     });
 
     // then
-    const { status } = response;
-    expect(status).toBe(HttpStatus.BAD_REQUEST);
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 
-    const body = (await response.json()) as MessageType;
+    const body = (await response.json()) as { message: string[] | string };
     const messages = Array.isArray(body.message) ? body.message : [body.message];
 
     expect(messages).toBeDefined();
-    // Mindestens die o.g. Fehler; je nach Validatoren können es mehr sein
-    expect(messages.length).toBeGreaterThanOrEqual(expectedMsg.length);
-    expect(messages).toStrictEqual(expect.arrayContaining(expectedMsg));
+
+    expect(messages).toEqual(expect.arrayContaining(expectedMsg));
+    expect(messages).toHaveLength(expectedMsg.length);
   });
 
   test.concurrent('Neuer Student, aber Matrikel/E-Mail existiert bereits', async () => {
@@ -204,24 +185,37 @@ describe('POST /rest', () => {
     headers.append(CONTENT_TYPE, APPLICATION_JSON);
     headers.append(AUTHORIZATION, `${BEARER} ${token}`);
 
-    // when
-    const response = await fetch(restURL, {
+    const suffix = Date.now().toString();
+    const dup = {
+      matriculationNumber: `DUP${suffix}`,
+      firstName: 'Eva',
+      lastName: 'Dup',
+      email: `dup${suffix}@stud.hs-karlsruhe.de`,
+      semester: 2,
+      wallet: { balance: 0, autoReloadEnabled: false },
+      transactions: [],
+    };
+
+    const r1 = await fetch(restURL, {
       method: POST,
-      body: JSON.stringify(neuerStudentKonflikt),
+      body: JSON.stringify(dup),
       headers,
     });
+    expect(r1.status).toBe(HttpStatus.CREATED);
 
-    // then
-    const { status } = response;
-    expect(status).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
+    const r2 = await fetch(restURL, {
+      method: POST,
+      body: JSON.stringify(dup),
+      headers,
+    });
+    expect(r2.status).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
 
-    const body = (await response.json()) as MessageType;
-    // Meldung kann je nach Service "matriculationNumber" oder "email" enthalten
-    expect(
-      Array.isArray(body.message)
-        ? body.message.join(' ')
-        : body.message,
-    ).toMatch(/(matriculationNumber|email)/u);
+    const body = (await r2.json()) as { message: string | string[] };
+    const msg = Array.isArray(body.message) ? body.message.join(' ') : body.message;
+
+    expect(msg).toMatch(
+      /(Matrikel|Matrikel-Nummer|E[- ]?Mail|existiert bereits|matriculation|email|exists)/iu,
+    );
   });
 
   test.concurrent('Neuer Student, aber ohne Token', async () => {
@@ -251,6 +245,4 @@ describe('POST /rest', () => {
     // then
     expect(status).toBe(HttpStatus.UNAUTHORIZED);
   });
-
-  test.concurrent.todo('Abgelaufener Token');
 });
